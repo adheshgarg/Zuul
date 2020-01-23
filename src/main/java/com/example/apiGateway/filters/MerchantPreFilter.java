@@ -40,6 +40,7 @@ public class MerchantPreFilter extends ZuulFilter {
         try {
             decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
+            ctx.addOriginResponseHeader("merchantId",uid);
         }
         catch (FirebaseAuthException e) {
             e.printStackTrace();
