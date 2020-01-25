@@ -1,5 +1,6 @@
 package com.example.apiGateway;
 
+import com.example.apiGateway.filters.CustomerPreFilter;
 import com.example.apiGateway.filters.MerchantPreFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,10 +18,15 @@ public class ApiGatewayApplication {
 		SpringApplication.run(ApiGatewayApplication.class, args);
 	}
 
-//	@Bean
-//	public MerchantPreFilter merchantPreFilter(){
-//		return new MerchantPreFilter();
-//	}
+	@Bean
+	public MerchantPreFilter merchantPreFilter(){
+		return new MerchantPreFilter();
+	}
+
+    @Bean
+    public CustomerPreFilter customerPreFilter(){
+        return new CustomerPreFilter();
+    }
 
 	@Bean
 	public CorsFilter corsFilter() {
