@@ -4,9 +4,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
+import java.net.URL;
 
 public class CustomerPreFilter extends ZuulFilter {
 
@@ -20,7 +23,7 @@ public class CustomerPreFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 2;
+        return FilterConstants.SEND_RESPONSE_FILTER_ORDER;
     }
 
     @Override
@@ -48,20 +51,22 @@ public class CustomerPreFilter extends ZuulFilter {
                 ctx.setSendZuulResponse(false);
                 ctx.setResponseStatusCode(401);
                 ctx.setResponseBody("User not verified!!");
+                return ctx;
             }
             System.out.println(uid);
             System.out.println(decodedToken.getEmail());
             System.out.println(decodedToken.getIssuer());
             System.out.println(decodedToken.getName() + "\n");
         } catch (Exception e) {
+            ctx.setResponseStatusCode(402);
+            ctx.setResponseBody("Error in token!");
             e.printStackTrace();
+            return ctx;
         }
         ctx.addZuulRequestHeader("customerId", decodedToken.getUid());
         ctx.addZuulRequestHeader("customerName",decodedToken.getName());
         ctx.addZuulRequestHeader("customerEmail", decodedToken.getEmail());
-
-//        return ctx;
-        return null;
+        return ctx;
     }
 
     private String getRequestBody(final HttpServletRequest request) {
